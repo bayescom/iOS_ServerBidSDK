@@ -1,0 +1,19 @@
+use_frameworks!
+
+platform :ios, '9.0'
+source 'https://github.com/CocoaPods/Specs.git'
+target 'AdServerBidSDK_Example' do
+
+  pod 'AdServerBidSDK', :path => '../'
+  pod 'AdServerBidSDK/Mercury', :path => '../'
+  pod 'AdServerBidSDK/CSJ', :path => '../'
+  pod 'AdServerBidSDK/GDT', :path => '../'
+  pod 'AdServerBidSDK/KS', :path => '../'
+
+  pod 'Masonry'
+
+  target 'AdServerBidSDK_Tests' do
+    inherit! :search_paths
+    
+  end
+end
