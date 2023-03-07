@@ -53,6 +53,7 @@
         _supplier = supplier;
         _leftTime = 5;  // 默认5s
         _ks_ad = [[KSSplashAdView alloc] initWithPosId:_supplier.sdk_adspot_id];
+//        _ks_ad = [[KSSplashAdView alloc] initWithPosId:@"4000000041"];
         _ks_ad.delegate = self;
     //    _ks_ad.needShowMiniWindow = NO;
         _ks_ad.rootViewController = _adspot.viewController;
@@ -68,9 +69,11 @@
     if (parallel_timeout == 0) {
         parallel_timeout = 3000;
     }
+    NSDictionary *response = [NSString dictionaryWithJsonString:_supplier.winSupplierInfo];
+    
     _ks_ad.timeoutInterval = parallel_timeout / 1000.0;
     
-    [_ks_ad loadAdData];
+    [_ks_ad loadAdDataWithResponse:response];
 }
 
 - (void)supplierStateInPull {

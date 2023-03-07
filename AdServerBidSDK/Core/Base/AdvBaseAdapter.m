@@ -204,15 +204,17 @@
         // 穿山甲SDK
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-//            [NSClassFromString(clsName) performSelector:@selector(setAppID:) withObject:supplier.sdk_app_id];
-            [NSClassFromString(clsName) performSelector:@selector(setAppID:) withObject:@"5000546"];
+            [NSClassFromString(clsName) performSelector:@selector(setAppID:) withObject:supplier.sdk_app_id];
             
         });
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
         // 快手
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
+            
+            
             [NSClassFromString(clsName) performSelector:@selector(setAppId:) withObject:supplier.sdk_app_id];
+//            [NSClassFromString(clsName) performSelector:@selector(setAppId:) withObject:@"90010"];
         });
 
     } else {

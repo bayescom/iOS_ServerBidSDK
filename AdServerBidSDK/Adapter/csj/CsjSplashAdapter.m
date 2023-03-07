@@ -47,8 +47,7 @@
             CGFloat real_h = _adspot.logoImage.size.height*(real_w/_adspot.logoImage.size.width);
             adFrame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height-real_h);
         }
-//        _csj_ad = [[BUSplashAd alloc] initWithSlotID:_supplier.sdk_adspot_id adSize:adFrame.size];
-        _csj_ad = [[BUSplashAd alloc] initWithSlotID:@"800546851" adSize:adFrame.size];
+        _csj_ad = [[BUSplashAd alloc] initWithSlotID:_supplier.sdk_adspot_id adSize:adFrame.size];
         _csj_ad.delegate = self;
     }
     return self;
@@ -62,8 +61,9 @@
         parallel_timeout = 3000;
     }
     _csj_ad.tolerateTimeout = parallel_timeout / 1000.0;
-    
+
     _supplier.state = AdServerBidSdkSupplierStateInPull; // 从请求广告到结果确定前
+    [_csj_ad setAdMarkup:_supplier.winSupplierInfo];
     [self.csj_ad loadAdData];
 }
 
@@ -80,6 +80,8 @@
 - (void)supplierRequestToken {
     ADV_LEVEL_INFO_LOG(@"穿山甲 请求token");
     NSString *token = [_csj_ad biddingToken];
+//    NSString *token = [BUSplashAd getBiddingToken:_supplier.sdk_adspot_id];
+
     _supplier.token = token;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
 //    NSLog(@"穿山甲token: %@", token);

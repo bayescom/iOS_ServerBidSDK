@@ -236,29 +236,29 @@
         if (supplier.buyerId) {
             [dicTemp setObject:supplier.buyerId forKey:@"buyer_id"];
         }
-        
+
         if (supplier.sdkInfo) {
             [dicTemp setObject:supplier.sdkInfo forKey:@"sdk_info"];
         }
-        
+
         [dicTemp setObject:SDK_ID_GDT forKey:@"sdk_id"];
         [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_CSJ]) {
         
-        if (supplier.token) {
-            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
-        }
-        
-        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
-        [_tokenInfos addObject:dicTemp];
+//        if (supplier.token) {
+//            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
+//        }
+//
+//        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
+//        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
         
-        NSLog(@"kstoken: %@",supplier.ksToken);
-        if (supplier.ksToken) {
-            [dicTemp setObject:supplier.ksToken forKey:@"sdkToken"];
-        }
-        [dicTemp setObject:SDK_ID_KS forKey:@"sdk_id"];
-        [_tokenInfos addObject:dicTemp];
+//        NSLog(@"kstoken: %@",supplier.ksToken);
+//        if (supplier.ksToken) {
+//            [dicTemp setObject:supplier.ksToken forKey:@"sdkToken"];
+//        }
+//        [dicTemp setObject:SDK_ID_KS forKey:@"sdk_id"];
+//        [_tokenInfos addObject:dicTemp];
     }
 
     if (_saveTokenCount == _model.suppliers.count) {
@@ -267,9 +267,7 @@
 }
 
 - (void)loadMercurySupplier:(NSMutableArray *)arrayInfos {
-    
-    NSLog(@"%@", arrayInfos);
-    
+        
     AdvSupplier *mercurySupplier = [[AdvSupplier alloc] init];
     mercurySupplier.identifier = SDK_ID_MERCURY;
     mercurySupplier.sdkBiddingInfo = arrayInfos;
