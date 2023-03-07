@@ -87,6 +87,11 @@
     if (repoType == AdServerBidSdkSupplierRepoBiddingToken) {
         [_mgr collectBiddingTokenWithSupplier:supplier];
     }
+    
+    // 胜出渠道的信息
+    if (repoType == AdServerBidSdkSupplierRepoBiddingWinInfo) {
+        [_mgr requestWinSupplier:supplier];
+    }
 
     // 如果并发渠道失败了 要通知mananger那边 _inwaterfallcount -1
     if (repoType == AdServerBidSdkSupplierRepoFaileded && supplier.isParallel) {
@@ -158,6 +163,7 @@
     dispatch_once(&onceToken, ^{
         ADV_LEVEL_INFO_LOG(@"初始化MercurySDK");
         Class cls = NSClassFromString(@"MercuryConfigManager");
+        NSLog(@"%@ %@",mercuryAdspot.appid, mercuryAdspot.appkey);
         [cls performSelector:@selector(setAppID:mediaKey:) withObject:mercuryAdspot.appid withObject:mercuryAdspot.appkey];
         
         NSString *ua = [self.ext objectForKey:AdServerBidSDKUaKey];
@@ -198,7 +204,9 @@
         // 穿山甲SDK
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            [NSClassFromString(clsName) performSelector:@selector(setAppID:) withObject:supplier.sdk_app_id];
+//            [NSClassFromString(clsName) performSelector:@selector(setAppID:) withObject:supplier.sdk_app_id];
+            [NSClassFromString(clsName) performSelector:@selector(setAppID:) withObject:@"5000546"];
+            
         });
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
         // 快手

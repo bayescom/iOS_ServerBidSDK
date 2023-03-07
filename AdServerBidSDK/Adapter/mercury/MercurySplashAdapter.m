@@ -37,7 +37,9 @@
         _adspot = adspot;
         _supplier = supplier;
         [MercuryConfigManager openDebug:YES];
-        _mercury_ad = [[MercurySplashAd alloc] initAdWithAdspotId:_supplier.sdk_adspot_id delegate:self];
+//        NSLog(@"==>%@", [MercuryConfigManager sdkVersion]);
+        NSLog(@"%@", _supplier.sdkBiddingInfo);
+        _mercury_ad = [[MercurySplashAd alloc] initAdWithAdspotId:_supplier.sdk_adspot_id customExt:@{@"sdk_bidding" : _supplier.sdkBiddingInfo} delegate:self];
         _mercury_ad.placeholderImage = _adspot.backgroundImage;
         _mercury_ad.logoImage = _adspot.logoImage;
         NSNumber *showLogoType = _adspot.extParameter[MercuryLogoShowTypeKey];
@@ -70,7 +72,6 @@
         }
     }
     
-    [_mercury_ad loadAd];
 }
 
 - (void)supplierStateInPull {
@@ -81,6 +82,13 @@
     ADV_LEVEL_INFO_LOG(@"Mercury 成功");
     [self unifiedDelegate];
     
+}
+
+- (void)supplierRequestToken {
+    ADV_LEVEL_INFO_LOG(@"Mercury 加载token");
+    [_mercury_ad loadAd];
+
+//    [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
 }
 
 - (void)supplierStateFailed {
@@ -139,26 +147,24 @@
 }
 
 - (void)deallocAdapter {
-//    ADV_LEVEL_INFO_LOG(@"11===> %s %@", __func__, [NSThread currentThread]);
     ADV_LEVEL_INFO_LOG(@"%s %@", __func__, self);
     if (self.mercury_ad) {
-        id timer0 = [_mercury_ad performSelector:@selector(timer0)];
-        [timer0 performSelector:@selector(stopTimer)];
-
-        id timer = [_mercury_ad performSelector:@selector(timer)];
-        [timer performSelector:@selector(stopTimer)];
-        
-        UIViewController *vc = [_mercury_ad performSelector:@selector(splashVC)];
-        [vc dismissViewControllerAnimated:NO completion:nil];
-        [vc.view removeFromSuperview];
-        
         self.delegate = nil;
-        _mercury_ad.delegate = nil;
+        [_mercury_ad destory];
         _mercury_ad = nil;
     }
 }
 
 // MARK: ======================= MercurySplashAdDelegate =======================
+
+- (void)mercury_splashAdServerBiddingResponse:(MercurySplashAd *)splashAd info:(NSDictionary *)info {
+    NSLog(@"fff info: %@", info);
+    _supplier.winSupplierId = info[@"sdkId"];
+    _supplier.winSupplierInfo = info[@"sdkInfo"];
+    [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingWinInfo supplier:_supplier error:nil];
+
+}
+
 - (void)mercury_splashAdDidLoad:(MercurySplashAd *)splashAd {
     _supplier.supplierPrice = splashAd.price;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBidding supplier:_supplier error:nil];
@@ -181,6 +187,7 @@
 }
 
 - (void)mercury_splashAdFailError:(nullable NSError *)error {
+    NSLog(@"%s  %@", __func__, error);
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoFaileded supplier:_supplier error:error];
     _supplier.state = AdServerBidSdkSupplierStateFailed;
     if (_supplier.isParallel == YES) { // 并行不释放 只上报

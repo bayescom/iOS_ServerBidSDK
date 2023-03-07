@@ -80,6 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
 // 进入HeadBidding队列
 - (void)inHeadBiddingQueueWithSupplier:(AdvSupplier *)supplier;
 
+// 请求胜出渠道的广告
+- (void)requestWinSupplier:(AdvSupplier *)supplier;
 // 搜集bidding相关的信息
 - (void)collectBiddingTokenWithSupplier:(AdvSupplier *)supplier;
 

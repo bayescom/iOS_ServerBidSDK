@@ -47,7 +47,8 @@
             CGFloat real_h = _adspot.logoImage.size.height*(real_w/_adspot.logoImage.size.width);
             adFrame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height-real_h);
         }
-        _csj_ad = [[BUSplashAd alloc] initWithSlotID:_supplier.sdk_adspot_id adSize:adFrame.size];
+//        _csj_ad = [[BUSplashAd alloc] initWithSlotID:_supplier.sdk_adspot_id adSize:adFrame.size];
+        _csj_ad = [[BUSplashAd alloc] initWithSlotID:@"800546851" adSize:adFrame.size];
         _csj_ad.delegate = self;
     }
     return self;
@@ -81,7 +82,7 @@
     NSString *token = [_csj_ad biddingToken];
     _supplier.token = token;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
-    NSLog(@"穿山甲token: %@", token);
+//    NSLog(@"穿山甲token: %@", token);
 
 }
 

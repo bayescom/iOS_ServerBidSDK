@@ -48,15 +48,14 @@
         _adspot = adspot;
         _supplier = supplier;
         _leftTime = 5;  // 默认5s
-        _gdt_ad = [[GDTSplashAd alloc] initWithPlacementId:_supplier.sdk_adspot_id];
-        _gdt_ad.delegate = self;
     }
     return self;
 }
 
 - (void)supplierStateLoad {
     ADV_LEVEL_INFO_LOG(@"加载广点通 supplier: %@", _supplier);
-    
+    _gdt_ad = [[GDTSplashAd alloc] initWithPlacementId:_supplier.sdk_adspot_id token:_supplier.winSupplierInfo];
+    _gdt_ad.delegate = self;
     if (!_gdt_ad) {
         return;
     }
@@ -90,9 +89,10 @@
 
     _supplier.buyerId = buyerId;
     _supplier.sdkInfo = sdkInfo;
+    _supplier.state = AdServerBidSdkSupplierStateInPull;
 
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
-    NSLog(@"广点通buyerId: %@\r\n广点通sdkInfo: %@", buyerId, sdkInfo);
+//    NSLog(@"广点通buyerId: %@\r\n广点通sdkInfo: %@", buyerId, sdkInfo);
 
 }
 

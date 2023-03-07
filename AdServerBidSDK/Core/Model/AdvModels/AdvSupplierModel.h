@@ -26,7 +26,9 @@ typedef NS_ENUM(NSUInteger, AdServerBidSdkSupplierRepoType) {
     /// bidding广告位生命周期上报
     AdServerBidSdkSupplierRepoGMBidding,
     /// bidding广告位 上报token相关的信息
-    AdServerBidSdkSupplierRepoBiddingToken
+    AdServerBidSdkSupplierRepoBiddingToken,
+    /// bidding广告位 上报胜出渠道的相关的信息
+    AdServerBidSdkSupplierRepoBiddingWinInfo
 
 };
 
@@ -87,9 +89,15 @@ NSString * ADVStringFromNAdServerBidSdkSupplierRepoType(AdServerBidSdkSupplierRe
 // GDT
 @property (nonatomic, copy) NSString *buyerId;
 @property (nonatomic, copy) NSString *sdkInfo;
-// CSJ 和 KS
+// CSJ
 @property (nonatomic, copy) NSString *token;
+// KS
+@property (nonatomic, strong) NSDictionary *ksToken;
+// 各个渠道token  这个字段只在 MercuryAdapter里有用
+@property (nonatomic, strong) NSMutableArray *sdkBiddingInfo;
 
+@property (nonatomic, copy) NSString *winSupplierId; // 胜出的渠道id
+@property (nonatomic, copy) NSString *winSupplierInfo; // 胜出的渠道信息adm token bidResponse
 
 
 //以下为待删除字段

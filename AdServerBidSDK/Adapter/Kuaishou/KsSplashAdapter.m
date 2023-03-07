@@ -6,7 +6,7 @@
 //
 
 #import "KsSplashAdapter.h"
-
+#import "NSString+Adv.h"
 #if __has_include(<KSAdSDK/KSAdSDK.h>)
 #import <KSAdSDK/KSAdSDK.h>
 #else
@@ -89,9 +89,10 @@
     model.posId = _supplier.sdk_adspot_id;
 
     NSString *token = [KSAdSDKManager getBidRequestToken:model];
-    _supplier.token = token;
+    /// 此处之所以转成dictionary 是因为 raddus 出解析参数时出错
+    NSDictionary *ksToken = [NSString dictionaryWithJsonString:token];
+    _supplier.ksToken = ksToken;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
-    NSLog(@"快手token: %@", token);
 
 }
 

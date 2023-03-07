@@ -46,7 +46,7 @@
 
 /// 计时器检测bidding时间
 @property (nonatomic, strong) CADisplayLink *timeoutCheckTimer;
-@property (nonatomic, strong) NSMutableDictionary *tokenInfos;
+@property (nonatomic, strong) NSMutableArray *tokenInfos;
 /// bidding截止时间戳
 @property (nonatomic, assign) NSInteger timeout_stamp;
 
@@ -73,7 +73,7 @@
     _ext = [ext mutableCopy];
     _arrayHeadBidding = [NSMutableArray array];
     _arrayWaterfall = [NSMutableArray array];
-    _tokenInfos = [NSMutableDictionary dictionary];
+    _tokenInfos = [NSMutableArray array];
     _saveTokenCount = 0;
 //    [MIZombieSniffer installSniffer];
     
@@ -160,7 +160,10 @@
         
         
     } else {
-        supplier.state = AdServerBidSdkSupplierStateInHand;
+        // 不是准备就绪的状态 就是改为InHand
+        if (supplier.state != AdServerBidSdkSupplierStateReady) {
+            supplier.state = AdServerBidSdkSupplierStateInHand;
+        }
         [self reportWithType:AdServerBidSdkSupplierRepoLoaded supplier:supplier error:nil];
     }
     
@@ -233,26 +236,66 @@
         if (supplier.buyerId) {
             [dicTemp setObject:supplier.buyerId forKey:@"buyer_id"];
         }
+        
         if (supplier.sdkInfo) {
             [dicTemp setObject:supplier.sdkInfo forKey:@"sdk_info"];
         }
         
+        [dicTemp setObject:SDK_ID_GDT forKey:@"sdk_id"];
+        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_CSJ]) {
+        
         if (supplier.token) {
             [dicTemp setObject:supplier.token forKey:@"sdk_token"];
         }
-
+        
+        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
+        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
-        if (supplier.token) {
-            [dicTemp setObject:supplier.token forKey:@"sdkToken"];
+        
+        NSLog(@"kstoken: %@",supplier.ksToken);
+        if (supplier.ksToken) {
+            [dicTemp setObject:supplier.ksToken forKey:@"sdkToken"];
         }
+        [dicTemp setObject:SDK_ID_KS forKey:@"sdk_id"];
+        [_tokenInfos addObject:dicTemp];
     }
-    [_tokenInfos addEntriesFromDictionary:dicTemp];
-    
-    NSLog(@"-----> _tokenInfos: %@", _tokenInfos);
+
     if (_saveTokenCount == _model.suppliers.count) {
-        NSLog(@"%ld %ld", _saveTokenCount, _model.suppliers.count);
+        [self loadMercurySupplier:_tokenInfos];
     }
+}
+
+- (void)loadMercurySupplier:(NSMutableArray *)arrayInfos {
+    
+    NSLog(@"%@", arrayInfos);
+    
+    AdvSupplier *mercurySupplier = [[AdvSupplier alloc] init];
+    mercurySupplier.identifier = SDK_ID_MERCURY;
+    mercurySupplier.sdkBiddingInfo = arrayInfos;
+    mercurySupplier.sdk_adspot_id = _model.adspot.adspotid;
+    mercurySupplier.isParallel = YES;
+
+    [self notCPTLoadNextSuppluer:mercurySupplier error:nil];
+}
+
+// 请求获胜渠道的广告
+- (void)requestWinSupplier:(AdvSupplier *)supplier {
+    
+    __weak typeof(self) _self = self;
+    [_supplierM enumerateObjectsUsingBlock:^(AdvSupplier * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        __strong typeof(_self) self = _self;
+
+        // 根据id找到对应的胜出渠道
+        if ([obj.identifier isEqualToString:supplier.winSupplierId]) {
+            
+            obj.winSupplierInfo = supplier.winSupplierInfo;
+            obj.isParallel = NO;
+            obj.state = AdServerBidSdkSupplierStateReady;
+            [self notCPTLoadNextSuppluer:obj error:nil];
+            *stop = YES;
+        }
+    }];
 }
 
 - (void)inParallelWithErrorSupplier:(AdvSupplier *)errorSupplier {
