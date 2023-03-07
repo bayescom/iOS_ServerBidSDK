@@ -47,6 +47,7 @@
 /// 计时器检测bidding时间
 @property (nonatomic, strong) CADisplayLink *timeoutCheckTimer;
 @property (nonatomic, strong) NSMutableArray *tokenInfos;
+@property (nonatomic, strong) AdvSupplier *mercurySupplier;
 /// bidding截止时间戳
 @property (nonatomic, assign) NSInteger timeout_stamp;
 
@@ -233,24 +234,24 @@
     _saveTokenCount++;
     NSMutableDictionary *dicTemp = [NSMutableDictionary dictionary];
     if ([supplier.identifier isEqualToString:SDK_ID_GDT]) {
-        if (supplier.buyerId) {
-            [dicTemp setObject:supplier.buyerId forKey:@"buyer_id"];
-        }
-
-        if (supplier.sdkInfo) {
-            [dicTemp setObject:supplier.sdkInfo forKey:@"sdk_info"];
-        }
-
-        [dicTemp setObject:SDK_ID_GDT forKey:@"sdk_id"];
-        [_tokenInfos addObject:dicTemp];
-    } else if ([supplier.identifier isEqualToString:SDK_ID_CSJ]) {
-        
-//        if (supplier.token) {
-//            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
+//        if (supplier.buyerId) {
+//            [dicTemp setObject:supplier.buyerId forKey:@"buyer_id"];
 //        }
 //
-//        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
+//        if (supplier.sdkInfo) {
+//            [dicTemp setObject:supplier.sdkInfo forKey:@"sdk_info"];
+//        }
+//
+//        [dicTemp setObject:SDK_ID_GDT forKey:@"sdk_id"];
 //        [_tokenInfos addObject:dicTemp];
+    } else if ([supplier.identifier isEqualToString:SDK_ID_CSJ]) {
+        
+        if (supplier.token) {
+            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
+        }
+
+        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
+        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
         
 //        NSLog(@"kstoken: %@",supplier.ksToken);
@@ -268,32 +269,40 @@
 
 - (void)loadMercurySupplier:(NSMutableArray *)arrayInfos {
         
-    AdvSupplier *mercurySupplier = [[AdvSupplier alloc] init];
-    mercurySupplier.identifier = SDK_ID_MERCURY;
-    mercurySupplier.sdkBiddingInfo = arrayInfos;
-    mercurySupplier.sdk_adspot_id = _model.adspot.adspotid;
-    mercurySupplier.isParallel = YES;
+    self.mercurySupplier = [[AdvSupplier alloc] init];
+    self.mercurySupplier.identifier = SDK_ID_MERCURY;
+    self.mercurySupplier.sdkBiddingInfo = arrayInfos;
+    self.mercurySupplier.sdk_adspot_id = _model.adspot.adspotid;
+    self.mercurySupplier.isParallel = YES;
 
-    [self notCPTLoadNextSuppluer:mercurySupplier error:nil];
+    [self notCPTLoadNextSuppluer:self.mercurySupplier error:nil];
 }
 
 // 请求获胜渠道的广告
 - (void)requestWinSupplier:(AdvSupplier *)supplier {
     
-    __weak typeof(self) _self = self;
-    [_supplierM enumerateObjectsUsingBlock:^(AdvSupplier * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        __strong typeof(_self) self = _self;
+    if ([supplier.winSupplierId isEqualToString:SDK_ID_MERCURY]) {
+        self.mercurySupplier.winSupplierInfo = supplier.winSupplierInfo;
+        self.mercurySupplier.isParallel = NO;
+        self.mercurySupplier.state = AdServerBidSdkSupplierStateReady;
+        [self notCPTLoadNextSuppluer: self.mercurySupplier error:nil];
 
-        // 根据id找到对应的胜出渠道
-        if ([obj.identifier isEqualToString:supplier.winSupplierId]) {
-            
-            obj.winSupplierInfo = supplier.winSupplierInfo;
-            obj.isParallel = NO;
-            obj.state = AdServerBidSdkSupplierStateReady;
-            [self notCPTLoadNextSuppluer:obj error:nil];
-            *stop = YES;
-        }
-    }];
+    } else {
+        __weak typeof(self) _self = self;
+        [_supplierM enumerateObjectsUsingBlock:^(AdvSupplier * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            __strong typeof(_self) self = _self;
+
+            // 根据id找到对应的胜出渠道
+            if ([obj.identifier isEqualToString:supplier.winSupplierId]) {
+                
+                obj.winSupplierInfo = supplier.winSupplierInfo;
+                obj.isParallel = NO;
+                obj.state = AdServerBidSdkSupplierStateReady;
+                [self notCPTLoadNextSuppluer:obj error:nil];
+                *stop = YES;
+            }
+        }];
+    }
 }
 
 - (void)inParallelWithErrorSupplier:(AdvSupplier *)errorSupplier {

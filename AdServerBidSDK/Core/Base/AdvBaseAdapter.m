@@ -92,6 +92,16 @@
     if (repoType == AdServerBidSdkSupplierRepoBiddingWinInfo) {
         [_mgr requestWinSupplier:supplier];
     }
+    
+    // 渠道曝光
+    if (repoType == AdServerBidSdkSupplierRepoImped) {
+        [self reportAdExposuredApartFromMercury];
+    }
+    
+    // 点击上报
+    if (repoType == AdServerBidSdkSupplierRepoClicked) {
+        [self reportAdClickedApartFromMercury];
+    }
 
     // 如果并发渠道失败了 要通知mananger那边 _inwaterfallcount -1
     if (repoType == AdServerBidSdkSupplierRepoFaileded && supplier.isParallel) {
@@ -235,6 +245,24 @@
     [self setKsSDKVersion];
 }
 
+#pragma 需要通知MercuryAdapter 调用展现和点击曝光
+- (void)reportAdExposuredApartFromMercury {
+    id mer_adapter = [self adapterInParallelsWithSupplierId:SDK_ID_MERCURY.integerValue];
+    
+    if (mer_adapter) {
+        ((void (*)(id, SEL))objc_msgSend)((id)mer_adapter, @selector(reportAdExposured));
+    }
+}
+
+- (void)reportAdClickedApartFromMercury {
+    id mer_adapter = [self adapterInParallelsWithSupplierId:SDK_ID_MERCURY.integerValue];
+    
+    if (mer_adapter) {
+        ((void (*)(id, SEL))objc_msgSend)((id)mer_adapter, @selector(reportAdClicked));
+    }
+}
+
+
 - (void)setGdtSDKVersion {
     id cls = NSClassFromString(@"GDTSDKConfig");
     NSString *gdtVersion = [cls performSelector:@selector(sdkVersion)];
@@ -273,7 +301,7 @@
     }
 }
 
-// 查找一下 容器里有没有并行的渠道
+// 查找一下 容器里有没有并行的渠道  (待删除)
 - (id)adapterInParallelsWithSupplier:(AdvSupplier *)supplier {
     id adapterT;
     for (NSInteger i = 0 ; i < _arrParallelSupplier.count; i++) {
@@ -286,6 +314,21 @@
     }
     return adapterT;
 }
+
+// 根据 id 查找 容器中的渠道
+- (id)adapterInParallelsWithSupplierId:(NSInteger)identifier {
+    id adapterT;
+    for (NSInteger i = 0 ; i < _arrParallelSupplier.count; i++) {
+        
+        id temp = _arrParallelSupplier[i];
+        NSInteger tag = ((NSInteger (*)(id, SEL))objc_msgSend)((id)temp, @selector(tag));
+        if (tag == identifier) {
+            adapterT = temp;
+        }
+    }
+    return adapterT;
+}
+
 
 - (BOOL)isEmptyString:(NSString *)string{
        if(string == nil) {

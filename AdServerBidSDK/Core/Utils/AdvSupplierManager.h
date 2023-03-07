@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)advSupplierLoadMercurySupplier:(nullable AdvSupplierAdspot *)mercuryAdspot;
 
 
+
+
 /// bidding相关
 /// 开始bidding
 /// @param suppliers 参加bidding的渠道
@@ -84,10 +86,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)requestWinSupplier:(AdvSupplier *)supplier;
 // 搜集bidding相关的信息
 - (void)collectBiddingTokenWithSupplier:(AdvSupplier *)supplier;
+//
 
 // 接收失败的并发渠道
 - (void)inParallelWithErrorSupplier:(AdvSupplier *)errorSupplier;
-
 @end
 
 NS_ASSUME_NONNULL_END

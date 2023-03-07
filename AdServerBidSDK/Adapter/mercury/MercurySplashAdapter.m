@@ -28,6 +28,11 @@
 @property (nonatomic, assign) BOOL isCanch;
 @property (nonatomic, assign) NSInteger isGMBidding;
 
+// adserverbidding 环境下
+// isServerBidding = YES 意味着MercurySDK 竞价落败
+// isServerBidding = NO 意味着MercurySDK 竞价胜出
+@property (nonatomic, assign) BOOL isServerBidding;
+
 @end
 
 @implementation MercurySplashAdapter
@@ -36,6 +41,7 @@
     if (self = [super initWithSupplier:supplier adspot:adspot]) {
         _adspot = adspot;
         _supplier = supplier;
+        _isServerBidding = NO;
         [MercuryConfigManager openDebug:YES];
 //        NSLog(@"==>%@", [MercuryConfigManager sdkVersion]);
         NSLog(@"%@", _supplier.sdkBiddingInfo);
@@ -63,9 +69,6 @@
 
 - (void)supplierStateLoad {
     ADV_LEVEL_INFO_LOG(@"加载Mercury supplier: %@", _supplier);
-    //        if (_adspot.showLogoRequire) {
-    //            _mercury_ad.showType = MercurySplashAdAutoAdaptScreen;
-    //        }
     if (_adspot.timeout) {
         if (_adspot.timeout > 500) {
             _mercury_ad.fetchDelay = _supplier.timeout / 1000.0;
@@ -87,8 +90,6 @@
 - (void)supplierRequestToken {
     ADV_LEVEL_INFO_LOG(@"Mercury 加载token");
     [_mercury_ad loadAd];
-
-//    [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
 }
 
 - (void)supplierStateFailed {
@@ -156,9 +157,10 @@
 }
 
 // MARK: ======================= MercurySplashAdDelegate =======================
-
+// 如果是serverBidding 该回调会在 mercury_splashAdDidLoad 前触发
 - (void)mercury_splashAdServerBiddingResponse:(MercurySplashAd *)splashAd info:(NSDictionary *)info {
-    NSLog(@"fff info: %@", info);
+    NSLog(@"bidding info: %@", info);
+    _isServerBidding = YES;
     _supplier.winSupplierId = info[@"sdkId"];
     _supplier.winSupplierInfo = info[@"sdkInfo"];
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingWinInfo supplier:_supplier error:nil];
@@ -169,9 +171,16 @@
     _supplier.supplierPrice = splashAd.price;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBidding supplier:_supplier error:nil];
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoSucceeded supplier:_supplier error:nil];
+    
+    // 如果mercurySDK 胜出
+    if (!_isServerBidding) {
+        _supplier.winSupplierId = SDK_ID_MERCURY;
+        _supplier.winSupplierInfo = @"";
+        [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingWinInfo supplier:_supplier error:nil];
+    }
 
+    _supplier.state = AdServerBidSdkSupplierStateSuccess;
     if (_supplier.isParallel == YES) {
-        _supplier.state = AdServerBidSdkSupplierStateSuccess;
         return;
     }
     [self unifiedDelegate];
@@ -243,6 +252,16 @@
         [self.delegate adServerBidUnifiedViewDidLoad];
     }
     [self showAd];
+}
+
+- (void)reportAdExposured {
+    ADV_LEVEL_INFO_LOG(@"%s", __func__);
+    [_mercury_ad reportAdExposured];
+}
+
+- (void)reportAdClicked {
+    ADV_LEVEL_INFO_LOG(@"%s", __func__);
+    [_mercury_ad reportAdClicked];
 }
 
 @end

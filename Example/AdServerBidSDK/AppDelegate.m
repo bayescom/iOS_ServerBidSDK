@@ -27,13 +27,19 @@
     
 #pragma Demo 中有许多内容为开发调试的内容, 仅作为开发者调试自己的账号使用, 不一定会出广告, 建议使用自己的包名和id
     
+
+    return YES;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+
     // 请现在 plist 文件中配置 NSUserTrackingUsageDescription
     /*
      <key>NSUserTrackingUsageDescription</key>
      <string>该ID将用于向您推送个性化广告</string>
      */
     // 项目需要适配http
-    
+
     /*
      <key>NSAppTransportSecurity</key>
      <dict>
@@ -49,6 +55,7 @@
         [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
             if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
                 idfa = [[manager advertisingIdentifier] UUIDString];
+                NSLog(@"idfa:%@",idfa);
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 // do something
@@ -61,8 +68,7 @@
         }
 
     }
-    
-    return YES;
+
 }
 
 
