@@ -246,20 +246,20 @@
 //        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_CSJ]) {
         
-        if (supplier.token) {
-            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
-        }
-
-        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
-        [_tokenInfos addObject:dicTemp];
+//        if (supplier.token) {
+//            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
+//        }
+//
+//        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
+//        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
         
-//        NSLog(@"kstoken: %@",supplier.ksToken);
-//        if (supplier.ksToken) {
-//            [dicTemp setObject:supplier.ksToken forKey:@"sdkToken"];
-//        }
-//        [dicTemp setObject:SDK_ID_KS forKey:@"sdk_id"];
-//        [_tokenInfos addObject:dicTemp];
+        NSLog(@"kstoken: %@",supplier.ksToken);
+        if (supplier.ksToken) {
+            [dicTemp setObject:supplier.ksToken forKey:@"sdkToken"];
+        }
+        [dicTemp setObject:SDK_ID_KS forKey:@"sdk_id"];
+        [_tokenInfos addObject:dicTemp];
     }
 
     if (_saveTokenCount == _model.suppliers.count) {
@@ -267,6 +267,7 @@
     }
 }
 
+// 创建mercury渠道 并执行
 - (void)loadMercurySupplier:(NSMutableArray *)arrayInfos {
         
     self.mercurySupplier = [[AdvSupplier alloc] init];

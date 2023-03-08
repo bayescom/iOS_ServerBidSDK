@@ -73,7 +73,11 @@
     
     _ks_ad.timeoutInterval = parallel_timeout / 1000.0;
     
-    [_ks_ad loadAdDataWithResponse:response];
+    if (response) {
+        [_ks_ad loadAdDataWithResponse:response];
+    } else {
+        [_ks_ad loadAdData];
+    }
 }
 
 - (void)supplierStateInPull {
