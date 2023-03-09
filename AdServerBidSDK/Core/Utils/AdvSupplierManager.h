@@ -26,22 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 返回倍业SDK的信息
 - (void)advSupplierLoadMercurySupplier:(nullable AdvSupplierAdspot *)mercuryAdspot;
 
-
-
-
-/// bidding相关
-/// 开始bidding
-/// @param suppliers 参加bidding的渠道
-- (void)advManagerBiddingActionWithSuppliers:(NSMutableArray <AdvSupplier*>*)suppliers;
-
-/// bidding相关
-/// 结束bidding
-/// @param supplier 参加bidding的渠道
-- (void)advManagerBiddingEndWithWinSupplier:(AdvSupplier *)supplier;
-
-/// bidding失败(即规定时间内,所有bidding广告为 都没有返回广告)
-- (void)advManagerBiddingFailed;
-
 @end
 
 @interface AdvSupplierManager : NSObject
@@ -53,11 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 数据加载回调
 @property (nonatomic, weak) id<AdvSupplierManagerDelegate> delegate;
 
-/// 设置打底渠道
-//- (void)setDefaultAdvSupplierWithMediaId:(NSString *)mediaId
-//                                adspotId:(NSString *)adspotid
-//                                mediaKey:(NSString *)mediakey
-//                                   sdkId:(nonnull NSString *)sdkid;
 
 /// 数据管理对象
 + (instancetype)manager;
@@ -79,17 +58,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param repoType 上报的类型
 - (void)reportWithType:(AdServerBidSdkSupplierRepoType)repoType supplier:(AdvSupplier *)supplier error:(NSError *)error;
 
-// 进入HeadBidding队列
-- (void)inHeadBiddingQueueWithSupplier:(AdvSupplier *)supplier;
-
 // 请求胜出渠道的广告
 - (void)requestWinSupplier:(AdvSupplier *)supplier;
 // 搜集bidding相关的信息
 - (void)collectBiddingTokenWithSupplier:(AdvSupplier *)supplier;
-//
 
-// 接收失败的并发渠道
-- (void)inParallelWithErrorSupplier:(AdvSupplier *)errorSupplier;
+// 执行下个渠道(目前胜出只有一个渠道 所以调用这个方法就是向外抛错误)
+- (void)loadNextSupplierIfHas;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

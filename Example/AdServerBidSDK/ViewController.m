@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-
+#import "DemoUtils.h"
 @interface ViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray<NSDictionary<NSString *, NSString *> *> *dataArr;
@@ -81,6 +81,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UIViewController *vc = [[NSClassFromString(_dataArr[indexPath.row][@"targetVCName"]) alloc] init];
     vc.title = _dataArr[indexPath.row][@"title"];
+    if (!vc) {
+        [DemoUtils showToast:@"暂不支持" inView:self.view];
+        return;
+    }
     [self.navigationController pushViewController:vc animated:YES];
 }
 

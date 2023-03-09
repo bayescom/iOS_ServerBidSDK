@@ -179,12 +179,6 @@
         clsName = @"MercurySplashAdapter";
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
         clsName = @"KsSplashAdapter";
-    } else if ([supplier.identifier isEqualToString:SDK_ID_BAIDU]) {
-        clsName = @"BdSplashAdapter";
-    } else if ([supplier.identifier isEqualToString:SDK_ID_TANX]) {
-        clsName = @"TanxSplashAdapter";
-    } else if ([supplier.identifier isEqualToString:SDK_ID_BIDDING]) {
-        clsName = @"AdvBiddingSplashAdapter";
     }
     
     

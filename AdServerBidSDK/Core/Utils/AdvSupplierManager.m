@@ -17,11 +17,6 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 @interface AdvSupplierManager ()
-{
-    NSInteger _saveTokenCount;
-    NSInteger _waterfallMinPrice;
-
-}
 @property (nonatomic, strong) AdvSupplierModel *model;
 
 // 可执行渠道
@@ -34,22 +29,13 @@
 /// 自定义拓展字段
 @property (nonatomic, strong) NSDictionary *ext;
 
-/// 是否是走的本地的渠道
-@property (nonatomic, assign) BOOL isLoadLocalSupplier;
-
 
 @property (nonatomic, strong) AdvUploadTKUtil *tkUploadTool;
 
-@property (nonatomic, strong) NSMutableArray *arrayWaterfall;
-@property (nonatomic, strong) NSMutableArray *arrayHeadBidding;
-
-
-/// 计时器检测bidding时间
-@property (nonatomic, strong) CADisplayLink *timeoutCheckTimer;
+/// 各个渠道的token信息
 @property (nonatomic, strong) NSMutableArray *tokenInfos;
+/// 将要携带各渠道token信息的Mercury渠道
 @property (nonatomic, strong) AdvSupplier *mercurySupplier;
-/// bidding截止时间戳
-@property (nonatomic, assign) NSInteger timeout_stamp;
 
 @end
 
@@ -72,27 +58,10 @@
     _adspotId = adspotId;
     _tkUploadTool = [[AdvUploadTKUtil alloc] init];
     _ext = [ext mutableCopy];
-    _arrayHeadBidding = [NSMutableArray array];
-    _arrayWaterfall = [NSMutableArray array];
     _tokenInfos = [NSMutableArray array];
-    _saveTokenCount = 0;
 //    [MIZombieSniffer installSniffer];
     
-    // model不存在
-    if (!_model) {
-        ADV_LEVEL_INFO_LOG(@"本地策略不可用，拉取线上策略");
-        _isLoadLocalSupplier = NO;
         [self fetchData:NO];
-    } else {
-        _isLoadLocalSupplier = YES;
-        ADV_LEVEL_INFO_LOG(@"执行本地策略");
-        _supplierM = [_model.suppliers mutableCopy];
-        if ([_delegate respondsToSelector:@selector(advSupplierManagerLoadSuccess:)]) {
-            [_delegate advSupplierManagerLoadSuccess:self.model];
-        }
-        // 开始执行策略
-        [self loadBiddingSupplier];
-    }
 }
 
 
@@ -124,14 +93,6 @@
     }];
 }
 
-// bidding渠道按价格排序
-- (void)_sortSuppliersByPrice:(NSMutableArray <AdvSupplier *> *)suppliers {
-    
-    // 停止检测时间戳
-    [self deallocTimer];
-    
-
-}
 
 /// 非 CPT 执行下个渠道
 - (void)notCPTLoadNextSuppluer:(nullable AdvSupplier *)supplier error:(nullable NSError *)error {
@@ -182,12 +143,6 @@
     NSMutableDictionary *deviceInfo = [[AdvDeviceInfoUtil sharedInstance] getDeviceInfoWithMediaId:_mediaId adspotId:_adspotId];
     
     if (self.ext) {
-        
-        // 如果是缓存渠道 请求的时候要标记一下
-        if (_isLoadLocalSupplier) {
-            [self.ext setValue:@"1" forKey:@"cache_effect"];
-        }
-        
         [deviceInfo setValue:self.ext forKey:@"ext"];
         
         ADV_LEVEL_INFO_LOG(@"自定义扩展字段 ext : %@", self.ext);
@@ -231,30 +186,27 @@
 
 // 搜集token等相关信息
 - (void)collectBiddingTokenWithSupplier:(AdvSupplier *)supplier {
-    _saveTokenCount++;
     NSMutableDictionary *dicTemp = [NSMutableDictionary dictionary];
     if ([supplier.identifier isEqualToString:SDK_ID_GDT]) {
-//        if (supplier.buyerId) {
-//            [dicTemp setObject:supplier.buyerId forKey:@"buyer_id"];
-//        }
-//
-//        if (supplier.sdkInfo) {
-//            [dicTemp setObject:supplier.sdkInfo forKey:@"sdk_info"];
-//        }
-//
-//        [dicTemp setObject:SDK_ID_GDT forKey:@"sdk_id"];
-//        [_tokenInfos addObject:dicTemp];
+        if (supplier.buyerId) {
+            [dicTemp setObject:supplier.buyerId forKey:@"buyer_id"];
+        }
+
+        if (supplier.sdkInfo) {
+            [dicTemp setObject:supplier.sdkInfo forKey:@"sdk_info"];
+        }
+
+        [dicTemp setObject:SDK_ID_GDT forKey:@"sdk_id"];
+        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_CSJ]) {
         
-//        if (supplier.token) {
-//            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
-//        }
-//
-//        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
-//        [_tokenInfos addObject:dicTemp];
+        if (supplier.token) {
+            [dicTemp setObject:supplier.token forKey:@"sdk_token"];
+        }
+
+        [dicTemp setObject:SDK_ID_CSJ forKey:@"sdk_id"];
+        [_tokenInfos addObject:dicTemp];
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
-        
-        NSLog(@"kstoken: %@",supplier.ksToken);
         if (supplier.ksToken) {
             [dicTemp setObject:supplier.ksToken forKey:@"sdkToken"];
         }
@@ -262,9 +214,15 @@
         [_tokenInfos addObject:dicTemp];
     }
 
-    if (_saveTokenCount == _model.suppliers.count) {
+    if (_tokenInfos.count == _model.suppliers.count) {
         [self loadMercurySupplier:_tokenInfos];
     }
+}
+
+- (void)loadNextSupplierIfHas {
+    // 胜出的渠道只有一个 所以当这个渠道失败的时候 直接nil向外报错
+    [self notCPTLoadNextSuppluer:nil error:nil];
+
 }
 
 // 创建mercury渠道 并执行
@@ -304,10 +262,6 @@
             }
         }];
     }
-}
-
-- (void)inParallelWithErrorSupplier:(AdvSupplier *)errorSupplier {
-    
 }
 
 
@@ -351,17 +305,14 @@
         if (!saveOnly && [_delegate respondsToSelector:@selector(advSupplierManagerLoadError:)]) {
             [_delegate advSupplierManagerLoadError:[AdvError errorWithCode:AdvErrorCode_103 obj:error].toNSError];
         }
-        
-        
-        // 默认走打底
         ADV_LEVEL_ERROR_LOG(@"statusCode != 200, 策略返回出错");
-        //        [self doBaseSupplierIfHas];
         return;
     }
     
     NSError *parseErr = nil;
     AdvSupplierModel *a_model = [AdvSupplierModel adv_modelWithJSON:data];
-    NSLog(@"[JSON]%@", [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil]);
+    NSDictionary *logTemp = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    ADV_LEVEL_INFO_LOG(@"[RESPONSE]%@", logTemp);
     if (parseErr || !a_model) {
         // parse error
         if (!saveOnly && [_delegate respondsToSelector:@selector(advSupplierManagerLoadError:)]) {
@@ -397,38 +348,7 @@
 
 // MARK: ======================= 上报 =======================
 - (void)reportWithType:(AdServerBidSdkSupplierRepoType)repoType supplier:(AdvSupplier *)supplier error:(nonnull NSError *)error{
-    NSArray<NSString *> *uploadArr = nil;
-    /// 按照类型判断上报地址
-    if (repoType == AdServerBidSdkSupplierRepoLoaded) {
-        uploadArr = [self.tkUploadTool loadedtkUrlWithArr:supplier.loadedtk];
-    } else if (repoType == AdServerBidSdkSupplierRepoClicked) {
-        uploadArr =  supplier.clicktk;
-    } else if (repoType == AdServerBidSdkSupplierRepoSucceeded) {
-
-        uploadArr =  [self.tkUploadTool succeedtkUrlWithArr:supplier.succeedtk price:(supplier.supplierPrice == 0) ? supplier.sdk_price : supplier.supplierPrice];
-        // 曝光成功 更新本地策略
-        if (_isLoadLocalSupplier) {
-            ADV_LEVEL_INFO_LOG(@"曝光成功 此次使用本地缓存 更新本地策略");
-            [self fetchData:YES];
-        }
-    } else if (repoType == AdServerBidSdkSupplierRepoImped) {
-        uploadArr =  [self.tkUploadTool imptkUrlWithArr:supplier.imptk price:(supplier.supplierPrice == 0) ? supplier.sdk_price : supplier.supplierPrice];
-    } else if (repoType == AdServerBidSdkSupplierRepoFaileded) {
-        
-        
-        uploadArr =  [self.tkUploadTool failedtkUrlWithArr:supplier.failedtk error:error];
-        
-    } else if (repoType == AdServerBidSdkSupplierRepoGMBidding) {
-        uploadArr =  [self.tkUploadTool imptkUrlWithArr:supplier.biddingtk price:(supplier.supplierPrice == 0) ? supplier.sdk_price : supplier.supplierPrice];
-    }
-    
-    if (!uploadArr || uploadArr.count <= 0) {
-        // TODO: 上报地址不存在
-        return;
-    }
-    // 执行上报请求
-    [self.tkUploadTool reportWithUploadArr:uploadArr error:error];
-    ADV_LEVEL_INFO_LOG(@"%@ = 上报(impid: %@)", ADVStringFromNAdServerBidSdkSupplierRepoType(repoType), supplier.identifier);
+    // 暂时不进行任何上报
 }
 
 - (AdvUploadTKUtil *)tkUploadTool {
@@ -446,28 +366,14 @@
     return _fetchTime;
 }
 
-- (void)deallocTimer {
-    [_timeoutCheckTimer invalidate];
-    _timeoutCheckTimer = nil;
-    _timeout_stamp = 0;
-}
-
 - (void)dealloc
 {
     ADV_LEVEL_INFO_LOG(@"%s %@", __func__, self);
-    [self deallocTimer];
     _tkUploadTool = nil;
     
-    [_arrayHeadBidding removeAllObjects];
-    _arrayHeadBidding = nil;
-    
-    [_arrayWaterfall removeAllObjects];
-    _arrayWaterfall = nil;
-
     [_supplierM removeAllObjects];
     _supplierM = nil;
     _model = nil;
-    NSLog(@"==>%@",_model.suppliers);
 
 }
 @end

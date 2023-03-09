@@ -178,7 +178,6 @@
  * splash ad material load, ready to display
  */
 - (void)ksad_splashAdContentDidLoad:(KSSplashAdView *)splashAdView {
-    _supplier.supplierPrice = splashAdView.ecpm;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBidding supplier:_supplier error:nil];
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoSucceeded supplier:_supplier error:nil];
     if (_supplier.isParallel == YES) {

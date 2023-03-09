@@ -69,12 +69,7 @@
     
 }
 
-- (void)loadNextSupplierIfHas {
-    
-}
-
 - (void)reportWithType:(AdServerBidSdkSupplierRepoType)repoType supplier:(AdvSupplier *)supplier error:(NSError *)error {
-//    NSLog(@"|||--- %@ %ld %@",supplier.sdktag, (long)supplier.identifier.integerValue, supplier);
     [_mgr reportWithType:repoType supplier:supplier error:error];
      
     
@@ -102,26 +97,19 @@
     if (repoType == AdServerBidSdkSupplierRepoClicked) {
         [self reportAdClickedApartFromMercury];
     }
+    
+    // 渠道错误 并且非并发状态
+    if (repoType == AdServerBidSdkSupplierRepoFaileded && !supplier.isParallel) {
+        [_mgr loadNextSupplierIfHas];
 
-    // 如果并发渠道失败了 要通知mananger那边 _inwaterfallcount -1
+    }
+    
+    // 渠道错误 并且为并发状态
     if (repoType == AdServerBidSdkSupplierRepoFaileded && supplier.isParallel) {
-        [_mgr inParallelWithErrorSupplier:supplier];
+        [_mgr loadNextSupplierIfHas];
     }
-}
 
-// 开始bidding
-- (void)advManagerBiddingActionWithSuppliers:(NSMutableArray<AdvSupplier *> *)suppliers {
-    if (self.baseDelegate && [self.baseDelegate respondsToSelector:@selector(adServerBidBaseAdapterBiddingAction:)]) {
-        [self.baseDelegate adServerBidBaseAdapterBiddingAction:suppliers];
-    }
-}
 
-// bidding结束
-- (void)advManagerBiddingEndWithWinSupplier:(AdvSupplier *)winSupplier {
-    // 抛出去 下个版本会在每个广告位的 adServerBidBaseAdapterBiddingEndWithWinSupplier 里 执行GroMore的逻辑
-    if (self.baseDelegate && [self.baseDelegate respondsToSelector:@selector(adServerBidBaseAdapterBiddingEndWithWinSupplier:)]) {
-        [self.baseDelegate adServerBidBaseAdapterBiddingEndWithWinSupplier:winSupplier];
-    }
 }
 
 - (void)collectErrorWithSupplier:(AdvSupplier *)supplier error:(NSError *)error {

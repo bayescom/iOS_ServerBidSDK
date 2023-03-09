@@ -39,6 +39,7 @@
 
 - (instancetype)initWithSupplier:(AdvSupplier *)supplier adspot:(id)adspot {
     if (self = [super initWithSupplier:supplier adspot:adspot]) {
+        [MercuryConfigManager supportHttps:YES];
         _adspot = adspot;
         _supplier = supplier;
         _isServerBidding = NO;
@@ -168,7 +169,6 @@
 }
 
 - (void)mercury_splashAdDidLoad:(MercurySplashAd *)splashAd {
-    _supplier.supplierPrice = splashAd.price;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBidding supplier:_supplier error:nil];
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoSucceeded supplier:_supplier error:nil];
     
