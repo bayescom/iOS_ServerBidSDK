@@ -281,13 +281,13 @@
 }
 
 - (void)ksadDidClose {
-    if ([[NSDate date] timeIntervalSince1970]*1000 < _timeout_stamp) {// 关闭时的时间小于过期时间则点击了跳过
-
-    } else {
-        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
-            [self.delegate adServerBidSplashOnAdCountdownToZero];
-        }
-    }
+//    if ([[NSDate date] timeIntervalSince1970]*1000 < _timeout_stamp) {// 关闭时的时间小于过期时间则点击了跳过
+//
+//    } else {
+//        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
+//            [self.delegate adServerBidSplashOnAdCountdownToZero];
+//        }
+//    }
     if ([self.delegate respondsToSelector:@selector(adServerBidDidClose)]) {
         [self.delegate adServerBidDidClose];
     }

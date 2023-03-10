@@ -208,11 +208,11 @@
 
 - (void)splashAdDidClose:(nonnull BUSplashAd *)splashAd closeType:(BUSplashAdCloseType)closeType {
     
-    if (closeType == BUSplashAdCloseType_CountdownToZero) {
-        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
-            [self.delegate adServerBidSplashOnAdCountdownToZero];
-        }
-    }
+//    if (closeType == BUSplashAdCloseType_CountdownToZero) {
+//        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
+//            [self.delegate adServerBidSplashOnAdCountdownToZero];
+//        }
+//    }
     
     if (closeType == BUSplashAdCloseType_ClickSkip) {
         if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdSkipClicked)]) {

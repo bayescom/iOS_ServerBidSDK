@@ -15,7 +15,7 @@
 - (void)adServerBidSplashOnAdSkipClicked;
 
 /// 广告倒计时结束回调
-- (void)adServerBidSplashOnAdCountdownToZero;
+//- (void)adServerBidSplashOnAdCountdownToZero  DEPRECATED_MSG_ATTRIBUTE("该方法已废弃");;
 
 
 @end

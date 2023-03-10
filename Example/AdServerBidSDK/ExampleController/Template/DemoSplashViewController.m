@@ -163,11 +163,6 @@
     self.adServerBidSplash = nil;
 }
 
-/// 广告倒计时结束
-- (void)adServerBidSplashOnAdCountdownToZero {
-    NSLog(@"广告倒计时结束 %s", __func__);
-}
-
 /// 点击了跳过
 - (void)adServerBidSplashOnAdSkipClicked {
     NSLog(@"点击了跳过 %s", __func__);

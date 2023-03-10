@@ -213,9 +213,9 @@
 
 - (void)splashAdLifeTime:(NSUInteger)time {
     _leftTime = time;
-    if (time <= 0 && [self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
-        [self.delegate adServerBidSplashOnAdCountdownToZero];
-    }
+//    if (time <= 0 && [self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
+//        [self.delegate adServerBidSplashOnAdCountdownToZero];
+//    }
     
     // 当GMBidding的时候 会有一个splashAdClosed 不执行的bug 所以需要用这个逻辑来触发 adServerBidDidClose
     if (self.isGMBidding == 0) {
