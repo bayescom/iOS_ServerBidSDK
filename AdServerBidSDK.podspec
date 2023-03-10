@@ -86,6 +86,7 @@ Pod::Spec.new do |s|
         ks.source_files = 'AdServerBidSDK/Adapter/Kuaishou/**/*.{h,m}'
         ks.frameworks = ["Foundation", "UIKit", "MobileCoreServices", "CoreGraphics", "Security", "SystemConfiguration", "CoreTelephony", "AdSupport", "CoreData", "StoreKit", "AVFoundation", "MediaPlayer", "CoreMedia", "WebKit", "Accelerate", "CoreLocation", "AVKit", "MessageUI", "QuickLook", "AudioToolBox", "AddressBook"]
         ks.libraries =  ["z", "resolv.9", "sqlite3", "c++", "c++abi"]
+        ks.pod_target_xcconfig = { 'VALID_ARCHS[sdk=iphonesimulator*]' => ' ' }
     end
     
     s.xcconfig = {
