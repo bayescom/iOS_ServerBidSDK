@@ -26,7 +26,6 @@
 @property (nonatomic, strong) AdvSupplier *supplier;
 @property (nonatomic, weak) AdServerBidSplash *adspot;
 @property (nonatomic, assign) BOOL isCanch;
-@property (nonatomic, assign) NSInteger isGMBidding;
 
 // adserverbidding 环境下
 // isServerBidding = YES 意味着MercurySDK 竞价落败
@@ -104,18 +103,7 @@
     [super loadAd];
 }
 
-
-- (void)gmShowAd {
-    [self showAdAction];
-}
-
 - (void)showAd {
-    NSNumber *isGMBidding = ((NSNumber * (*)(id, SEL))objc_msgSend)((id)self.adspot, @selector(isGMBidding));
-    self.isGMBidding = isGMBidding.integerValue;
-
-    if (isGMBidding.integerValue == 1) {
-        return;
-    }
     [self showAdAction];
 }
 
@@ -223,9 +211,6 @@
 //        [self.delegate adServerBidSplashOnAdCountdownToZero];
 //    }
     
-    if (self.isGMBidding == 0) {
-        return;
-    }
     if (time <= 0 && [self.delegate respondsToSelector:@selector(adServerBidDidClose)]) {
         [self.delegate adServerBidDidClose];
     }

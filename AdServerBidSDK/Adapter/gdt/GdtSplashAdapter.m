@@ -37,7 +37,6 @@
 // 是否点击了
 @property (nonatomic, assign) BOOL isClick;
 @property (nonatomic, assign) BOOL isCanch;
-@property (nonatomic, assign) NSInteger isGMBidding;
 
 @end
 
@@ -120,17 +119,7 @@
     }
 }
 
-- (void)gmShowAd {
-    [self showAdAction];
-}
-
 - (void)showAd {
-    NSNumber *isGMBidding = ((NSNumber * (*)(id, SEL))objc_msgSend)((id)self.adspot, @selector(isGMBidding));
-
-    self.isGMBidding = isGMBidding.integerValue;
-    if (isGMBidding.integerValue == 1) {
-        return;
-    }
     [self showAdAction];
 }
 - (void)showAdAction {
@@ -217,10 +206,6 @@
 //        [self.delegate adServerBidSplashOnAdCountdownToZero];
 //    }
     
-    // 当GMBidding的时候 会有一个splashAdClosed 不执行的bug 所以需要用这个逻辑来触发 adServerBidDidClose
-    if (self.isGMBidding == 0) {
-        return;
-    }
     if (time <= 0 && [self.delegate respondsToSelector:@selector(adServerBidDidClose)]) {
         [self.delegate adServerBidDidClose];
     }
