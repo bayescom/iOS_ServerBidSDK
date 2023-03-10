@@ -47,6 +47,8 @@
             
         } else if (_supplier.state == AdServerBidSdkSupplierStateInHand) {
             [self supplierRequestToken];
+        } else if (_supplier.state == AdServerBidSdkSupplierStateReady) {
+            [self supplierStateLoad];
         } else {
 //                    NSLog(@"基类请load %ld %d %@", _supplier.identifier.integerValue, _supplier.isParallel, _supplier.sdktag);
             [self supplierStateLoad];

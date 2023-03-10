@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MercurySplashAdapter : AdvBaseAdPosition
 @property (nonatomic, weak) id<AdServerBidSplashDelegate> delegate;
 
+- (void)reportAdExposured;
+
+- (void)reportAdClicked;
+
 @end
 
 NS_ASSUME_NONNULL_END

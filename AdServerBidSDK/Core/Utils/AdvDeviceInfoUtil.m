@@ -388,7 +388,9 @@ static AdvDeviceInfoUtil *_instance = nil;
 
 + (NSString *)getIdfa {
     NSString *idfa = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-    
+    if ([idfa isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+        return @"";
+    }
     return idfa;
 }
 

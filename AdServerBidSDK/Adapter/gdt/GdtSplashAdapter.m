@@ -37,7 +37,6 @@
 // 是否点击了
 @property (nonatomic, assign) BOOL isClick;
 @property (nonatomic, assign) BOOL isCanch;
-@property (nonatomic, assign) NSInteger isGMBidding;
 
 @end
 
@@ -48,15 +47,14 @@
         _adspot = adspot;
         _supplier = supplier;
         _leftTime = 5;  // 默认5s
-        _gdt_ad = [[GDTSplashAd alloc] initWithPlacementId:_supplier.sdk_adspot_id];
-        _gdt_ad.delegate = self;
     }
     return self;
 }
 
 - (void)supplierStateLoad {
     ADV_LEVEL_INFO_LOG(@"加载广点通 supplier: %@", _supplier);
-    
+    _gdt_ad = [[GDTSplashAd alloc] initWithPlacementId:_supplier.sdk_adspot_id token:_supplier.winSupplierInfo];
+    _gdt_ad.delegate = self;
     if (!_gdt_ad) {
         return;
     }
@@ -90,9 +88,10 @@
 
     _supplier.buyerId = buyerId;
     _supplier.sdkInfo = sdkInfo;
+    _supplier.state = AdServerBidSdkSupplierStateInPull;
 
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
-    NSLog(@"广点通buyerId: %@\r\n广点通sdkInfo: %@", buyerId, sdkInfo);
+//    NSLog(@"广点通buyerId: %@\r\n广点通sdkInfo: %@", buyerId, sdkInfo);
 
 }
 
@@ -120,17 +119,7 @@
     }
 }
 
-- (void)gmShowAd {
-    [self showAdAction];
-}
-
 - (void)showAd {
-    NSNumber *isGMBidding = ((NSNumber * (*)(id, SEL))objc_msgSend)((id)self.adspot, @selector(isGMBidding));
-
-    self.isGMBidding = isGMBidding.integerValue;
-    if (isGMBidding.integerValue == 1) {
-        return;
-    }
     [self showAdAction];
 }
 - (void)showAdAction {
@@ -155,7 +144,6 @@
 
 - (void)splashAdDidLoad:(GDTSplashAd *)splashAd {
 //    NSLog(@"广点通开屏拉取成功 %@ %d",self.gdt_ad ,[self.gdt_ad isAdValid]);
-    _supplier.supplierPrice = splashAd.eCPM;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBidding supplier:_supplier error:nil];
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoSucceeded supplier:_supplier error:nil];
 //    NSLog(@"广点通开屏拉取成功 %d",splashAd.eCPM);
@@ -214,14 +202,10 @@
 
 - (void)splashAdLifeTime:(NSUInteger)time {
     _leftTime = time;
-    if (time <= 0 && [self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
-        [self.delegate adServerBidSplashOnAdCountdownToZero];
-    }
+//    if (time <= 0 && [self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
+//        [self.delegate adServerBidSplashOnAdCountdownToZero];
+//    }
     
-    // 当GMBidding的时候 会有一个splashAdClosed 不执行的bug 所以需要用这个逻辑来触发 adServerBidDidClose
-    if (self.isGMBidding == 0) {
-        return;
-    }
     if (time <= 0 && [self.delegate respondsToSelector:@selector(adServerBidDidClose)]) {
         [self.delegate adServerBidDidClose];
     }

@@ -26,7 +26,9 @@ typedef NS_ENUM(NSUInteger, AdServerBidSdkSupplierRepoType) {
     /// bidding广告位生命周期上报
     AdServerBidSdkSupplierRepoGMBidding,
     /// bidding广告位 上报token相关的信息
-    AdServerBidSdkSupplierRepoBiddingToken
+    AdServerBidSdkSupplierRepoBiddingToken,
+    /// bidding广告位 上报胜出渠道的相关的信息
+    AdServerBidSdkSupplierRepoBiddingWinInfo
 
 };
 
@@ -55,7 +57,7 @@ NSString * ADVStringFromNAdServerBidSdkSupplierRepoType(AdServerBidSdkSupplierRe
 
 @interface AdvSupplierModel : NSObject
 @property (nonatomic, strong)   NSMutableArray<AdvSupplier *> *suppliers;
-@property (nonatomic, strong)   AdvSupplierAdspot *adspot;
+@property (nonatomic, strong)   AdvSupplierAdspot *adspot;// Mercury 信息
 @property (nonatomic, copy)   NSString *msg;
 @property (nonatomic, assign) NSInteger code;
 @property (nonatomic, copy)   NSString *reqid;
@@ -87,26 +89,18 @@ NSString * ADVStringFromNAdServerBidSdkSupplierRepoType(AdServerBidSdkSupplierRe
 // GDT
 @property (nonatomic, copy) NSString *buyerId;
 @property (nonatomic, copy) NSString *sdkInfo;
-// CSJ 和 KS
+// CSJ
 @property (nonatomic, copy) NSString *token;
+// KS
+@property (nonatomic, copy) NSString *ksToken;
+// 各个渠道token  这个字段只在 MercuryAdapter里有用
+@property (nonatomic, strong) NSMutableArray *sdkBiddingInfo;
 
-
-
-//以下为待删除字段
-@property (nonatomic, assign) NSInteger sdk_price;
-
-/// 该字段由各渠道SDK 返回并填充 用来做比价
-/// GDT 单位:分   成功返回一个大于等于0的值，-1表示无权限或后台出现异常
-@property (nonatomic, assign) NSInteger supplierPrice;
+@property (nonatomic, copy) NSString *winSupplierId; // 胜出的渠道id
+@property (nonatomic, copy) NSString *winSupplierInfo; // 胜出的渠道信息adm token bidResponse
 
 @property (nonatomic, assign) BOOL isParallel;// 是否并行
 @property (nonatomic, assign) AdServerBidSdkSupplierState state;// 渠道状态
-@property (nonatomic, strong)   NSArray<NSString *> *clicktk;
-@property (nonatomic, strong)   NSArray<NSString *> *loadedtk;
-@property (nonatomic, strong)   NSArray<NSString *> *imptk;
-@property (nonatomic, strong)   NSArray<NSString *> *succeedtk;
-@property (nonatomic, strong)   NSArray<NSString *> *failedtk;
-@property (nonatomic, strong)   NSArray<NSString *> *biddingtk;// 只有gm使用
 
 
 @end

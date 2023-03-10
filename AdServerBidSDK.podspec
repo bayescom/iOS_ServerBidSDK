@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     s.homepage         = 'http://www.bayescom.com/'
     
     s.author           = { 'bayescom' => 'http://www.bayescom.com/' }
-    s.source           = { :git => 'https://github.com/bayescom/AdServerBidSDK.git', :tag => s.version.to_s }
+    s.source           = { :git => 'https://github.com/bayescom/iOS_ServerBidSDK.git', :tag => s.version.to_s }
     
     s.user_target_xcconfig = {'OTHER_LDFLAGS' => ['-ObjC']}
     
@@ -53,7 +53,7 @@ Pod::Spec.new do |s|
     s.subspec 'Mercury' do |mer|
         mer.dependency 'AdServerBidSDK/Core'
         mer.dependency 'AdServerBidSDK/Adspot'
-        mer.dependency 'MercurySDK', '3.1.8.1'
+        mer.dependency 'MercurySDK', '3.1.8.4'
         mer.source_files = 'AdServerBidSDK/Adapter/mercury/**/*.{h,m}'
         mer.frameworks = 'StoreKit', 'AVFoundation', 'CoreMotion'
     end

@@ -61,8 +61,9 @@
         parallel_timeout = 3000;
     }
     _csj_ad.tolerateTimeout = parallel_timeout / 1000.0;
-    
+
     _supplier.state = AdServerBidSdkSupplierStateInPull; // 从请求广告到结果确定前
+    [_csj_ad setAdMarkup:_supplier.winSupplierInfo];
     [self.csj_ad loadAdData];
 }
 
@@ -79,9 +80,11 @@
 - (void)supplierRequestToken {
     ADV_LEVEL_INFO_LOG(@"穿山甲 请求token");
     NSString *token = [_csj_ad biddingToken];
+//    NSString *token = [BUSplashAd getBiddingToken:_supplier.sdk_adspot_id];
+
     _supplier.token = token;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
-    NSLog(@"穿山甲token: %@", token);
+//    NSLog(@"穿山甲token: %@", token);
 
 }
 
@@ -112,16 +115,8 @@
     
 }
 
-- (void)gmShowAd {
-    [self showAdAction];
-}
 
 - (void)showAd {
-    NSNumber *isGMBidding = ((NSNumber * (*)(id, SEL))objc_msgSend)((id)self.adspot, @selector(isGMBidding));
-
-    if (isGMBidding.integerValue == 1) {
-        return;
-    }
     [self showAdAction];
 }
 - (void)showAdAction {
@@ -205,11 +200,11 @@
 
 - (void)splashAdDidClose:(nonnull BUSplashAd *)splashAd closeType:(BUSplashAdCloseType)closeType {
     
-    if (closeType == BUSplashAdCloseType_CountdownToZero) {
-        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
-            [self.delegate adServerBidSplashOnAdCountdownToZero];
-        }
-    }
+//    if (closeType == BUSplashAdCloseType_CountdownToZero) {
+//        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
+//            [self.delegate adServerBidSplashOnAdCountdownToZero];
+//        }
+//    }
     
     if (closeType == BUSplashAdCloseType_ClickSkip) {
         if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdSkipClicked)]) {

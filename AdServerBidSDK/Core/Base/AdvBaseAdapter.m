@@ -69,12 +69,7 @@
     
 }
 
-- (void)loadNextSupplierIfHas {
-    
-}
-
 - (void)reportWithType:(AdServerBidSdkSupplierRepoType)repoType supplier:(AdvSupplier *)supplier error:(NSError *)error {
-//    NSLog(@"|||--- %@ %ld %@",supplier.sdktag, (long)supplier.identifier.integerValue, supplier);
     [_mgr reportWithType:repoType supplier:supplier error:error];
      
     
@@ -87,26 +82,34 @@
     if (repoType == AdServerBidSdkSupplierRepoBiddingToken) {
         [_mgr collectBiddingTokenWithSupplier:supplier];
     }
+    
+    // 胜出渠道的信息
+    if (repoType == AdServerBidSdkSupplierRepoBiddingWinInfo) {
+        [_mgr requestWinSupplier:supplier];
+    }
+    
+    // 渠道曝光
+    if (repoType == AdServerBidSdkSupplierRepoImped) {
+        [self reportAdExposuredApartFromMercury];
+    }
+    
+    // 点击上报
+    if (repoType == AdServerBidSdkSupplierRepoClicked) {
+        [self reportAdClickedApartFromMercury];
+    }
+    
+    // 渠道错误 并且非并发状态
+    if (repoType == AdServerBidSdkSupplierRepoFaileded && !supplier.isParallel) {
+        [_mgr loadNextSupplierIfHas];
 
-    // 如果并发渠道失败了 要通知mananger那边 _inwaterfallcount -1
+    }
+    
+    // 渠道错误 并且为并发状态
     if (repoType == AdServerBidSdkSupplierRepoFaileded && supplier.isParallel) {
-        [_mgr inParallelWithErrorSupplier:supplier];
+        [_mgr loadNextSupplierIfHas];
     }
-}
 
-// 开始bidding
-- (void)advManagerBiddingActionWithSuppliers:(NSMutableArray<AdvSupplier *> *)suppliers {
-    if (self.baseDelegate && [self.baseDelegate respondsToSelector:@selector(adServerBidBaseAdapterBiddingAction:)]) {
-        [self.baseDelegate adServerBidBaseAdapterBiddingAction:suppliers];
-    }
-}
 
-// bidding结束
-- (void)advManagerBiddingEndWithWinSupplier:(AdvSupplier *)winSupplier {
-    // 抛出去 下个版本会在每个广告位的 adServerBidBaseAdapterBiddingEndWithWinSupplier 里 执行GroMore的逻辑
-    if (self.baseDelegate && [self.baseDelegate respondsToSelector:@selector(adServerBidBaseAdapterBiddingEndWithWinSupplier:)]) {
-        [self.baseDelegate adServerBidBaseAdapterBiddingEndWithWinSupplier:winSupplier];
-    }
 }
 
 - (void)collectErrorWithSupplier:(AdvSupplier *)supplier error:(NSError *)error {
@@ -158,6 +161,7 @@
     dispatch_once(&onceToken, ^{
         ADV_LEVEL_INFO_LOG(@"初始化MercurySDK");
         Class cls = NSClassFromString(@"MercuryConfigManager");
+        NSLog(@"%@ %@",mercuryAdspot.appid, mercuryAdspot.appkey);
         [cls performSelector:@selector(setAppID:mediaKey:) withObject:mercuryAdspot.appid withObject:mercuryAdspot.appkey];
         
         NSString *ua = [self.ext objectForKey:AdServerBidSDKUaKey];
@@ -199,12 +203,16 @@
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             [NSClassFromString(clsName) performSelector:@selector(setAppID:) withObject:supplier.sdk_app_id];
+            
         });
     } else if ([supplier.identifier isEqualToString:SDK_ID_KS]) {
         // 快手
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
+            
+            
             [NSClassFromString(clsName) performSelector:@selector(setAppId:) withObject:supplier.sdk_app_id];
+//            [NSClassFromString(clsName) performSelector:@selector(setAppId:) withObject:@"90010"];
         });
 
     } else {
@@ -224,6 +232,24 @@
     [self setMerSDKVersion];
     [self setKsSDKVersion];
 }
+
+#pragma 需要通知MercuryAdapter 调用展现和点击曝光
+- (void)reportAdExposuredApartFromMercury {
+    id mer_adapter = [self adapterInParallelsWithSupplierId:SDK_ID_MERCURY.integerValue];
+    
+    if (mer_adapter) {
+        ((void (*)(id, SEL))objc_msgSend)((id)mer_adapter, @selector(reportAdExposured));
+    }
+}
+
+- (void)reportAdClickedApartFromMercury {
+    id mer_adapter = [self adapterInParallelsWithSupplierId:SDK_ID_MERCURY.integerValue];
+    
+    if (mer_adapter) {
+        ((void (*)(id, SEL))objc_msgSend)((id)mer_adapter, @selector(reportAdClicked));
+    }
+}
+
 
 - (void)setGdtSDKVersion {
     id cls = NSClassFromString(@"GDTSDKConfig");
@@ -263,7 +289,7 @@
     }
 }
 
-// 查找一下 容器里有没有并行的渠道
+// 查找一下 容器里有没有并行的渠道  (待删除)
 - (id)adapterInParallelsWithSupplier:(AdvSupplier *)supplier {
     id adapterT;
     for (NSInteger i = 0 ; i < _arrParallelSupplier.count; i++) {
@@ -276,6 +302,21 @@
     }
     return adapterT;
 }
+
+// 根据 id 查找 容器中的渠道
+- (id)adapterInParallelsWithSupplierId:(NSInteger)identifier {
+    id adapterT;
+    for (NSInteger i = 0 ; i < _arrParallelSupplier.count; i++) {
+        
+        id temp = _arrParallelSupplier[i];
+        NSInteger tag = ((NSInteger (*)(id, SEL))objc_msgSend)((id)temp, @selector(tag));
+        if (tag == identifier) {
+            adapterT = temp;
+        }
+    }
+    return adapterT;
+}
+
 
 - (BOOL)isEmptyString:(NSString *)string{
        if(string == nil) {

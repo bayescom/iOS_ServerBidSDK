@@ -6,7 +6,7 @@
 //
 
 #import "KsSplashAdapter.h"
-
+#import "NSString+Adv.h"
 #if __has_include(<KSAdSDK/KSAdSDK.h>)
 #import <KSAdSDK/KSAdSDK.h>
 #else
@@ -53,6 +53,7 @@
         _supplier = supplier;
         _leftTime = 5;  // 默认5s
         _ks_ad = [[KSSplashAdView alloc] initWithPosId:_supplier.sdk_adspot_id];
+//        _ks_ad = [[KSSplashAdView alloc] initWithPosId:@"4000000041"];
         _ks_ad.delegate = self;
     //    _ks_ad.needShowMiniWindow = NO;
         _ks_ad.rootViewController = _adspot.viewController;
@@ -68,9 +69,15 @@
     if (parallel_timeout == 0) {
         parallel_timeout = 3000;
     }
+    NSDictionary *response = [NSString dictionaryWithJsonString:_supplier.winSupplierInfo];
+    
     _ks_ad.timeoutInterval = parallel_timeout / 1000.0;
     
-    [_ks_ad loadAdData];
+    if (response) {
+        [_ks_ad loadAdDataWithResponse:response];
+    } else {
+        [_ks_ad loadAdData];
+    }
 }
 
 - (void)supplierStateInPull {
@@ -89,9 +96,8 @@
     model.posId = _supplier.sdk_adspot_id;
 
     NSString *token = [KSAdSDKManager getBidRequestToken:model];
-    _supplier.token = token;
+    _supplier.ksToken = token;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
-    NSLog(@"快手token: %@", token);
 
 }
 
@@ -123,16 +129,8 @@
     
 }
 
-- (void)gmShowAd {
-    [self showAdAction];
-}
 
 - (void)showAd {
-    NSNumber *isGMBidding = ((NSNumber * (*)(id, SEL))objc_msgSend)((id)self.adspot, @selector(isGMBidding));
-
-    if (isGMBidding.integerValue == 1) {
-        return;
-    }
     [self showAdAction];
 }
 
@@ -170,7 +168,6 @@
  * splash ad material load, ready to display
  */
 - (void)ksad_splashAdContentDidLoad:(KSSplashAdView *)splashAdView {
-    _supplier.supplierPrice = splashAdView.ecpm;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBidding supplier:_supplier error:nil];
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoSucceeded supplier:_supplier error:nil];
     if (_supplier.isParallel == YES) {
@@ -214,9 +211,8 @@
 }
 /**
  * splash ad clicked
- * @param inMiniWindow whether click in mini window
  */
-- (void)ksad_splashAd:(KSSplashAdView *)splashAdView didClick:(BOOL)inMiniWindow {
+- (void)ksad_splashAdDidClick:(KSSplashAdView *)splashAdView {
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoClicked supplier:_supplier error:nil];
     if ([self.delegate respondsToSelector:@selector(adServerBidClicked)]) {
         [self.delegate adServerBidClicked];
@@ -244,7 +240,6 @@
  * @param showDuration  splash show duration (no subsequent callbacks, remove & release KSSplashAdView here)
  */
 - (void)ksad_splashAd:(KSSplashAdView *)splashAdView didSkip:(NSTimeInterval)showDuration {
-//    NSLog(@"----%@", NSStringFromSelector(_cmd));
     if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdSkipClicked)]) {
         [self.delegate adServerBidSplashOnAdSkipClicked];
     }
@@ -278,13 +273,13 @@
 }
 
 - (void)ksadDidClose {
-    if ([[NSDate date] timeIntervalSince1970]*1000 < _timeout_stamp) {// 关闭时的时间小于过期时间则点击了跳过
-
-    } else {
-        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
-            [self.delegate adServerBidSplashOnAdCountdownToZero];
-        }
-    }
+//    if ([[NSDate date] timeIntervalSince1970]*1000 < _timeout_stamp) {// 关闭时的时间小于过期时间则点击了跳过
+//
+//    } else {
+//        if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdCountdownToZero)]) {
+//            [self.delegate adServerBidSplashOnAdCountdownToZero];
+//        }
+//    }
     if ([self.delegate respondsToSelector:@selector(adServerBidDidClose)]) {
         [self.delegate adServerBidDidClose];
     }

@@ -27,12 +27,6 @@
 		4E98899E29AC61160068EF4F /* AdServerBidSDK-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4E98894829AC61160068EF4F /* AdServerBidSDK-Info.plist */; };
 		4E98899F29AC61160068EF4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98894929AC61160068EF4F /* main.m */; };
 		4E9889A029AC61160068EF4F /* DemoSplashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98894C29AC61160068EF4F /* DemoSplashViewController.m */; };
-		4E9889A129AC61160068EF4F /* DemoRewardVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98895029AC61160068EF4F /* DemoRewardVideoViewController.m */; };
-		4E9889A229AC61160068EF4F /* DemoFeedExpressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98895429AC61160068EF4F /* DemoFeedExpressViewController.m */; };
-		4E9889A329AC61160068EF4F /* DemoListFeedExpressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98895529AC61160068EF4F /* DemoListFeedExpressViewController.m */; };
-		4E9889A429AC61160068EF4F /* DemoFullScreenVideoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98895629AC61160068EF4F /* DemoFullScreenVideoController.m */; };
-		4E9889A529AC61160068EF4F /* DemoInterstitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98895729AC61160068EF4F /* DemoInterstitialViewController.m */; };
-		4E9889A629AC61160068EF4F /* DemoBannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98895A29AC61160068EF4F /* DemoBannerViewController.m */; };
 		4E9889BA29AC61170068EF4F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E98898829AC61160068EF4F /* Images.xcassets */; };
 		4E9889BB29AC61170068EF4F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98898A29AC61160068EF4F /* AppDelegate.m */; };
 		4E9889BC29AC61170068EF4F /* CustomListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E98898B29AC61160068EF4F /* CustomListViewController.m */; };
@@ -110,19 +104,7 @@
 		4E98894829AC61160068EF4F /* AdServerBidSDK-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AdServerBidSDK-Info.plist"; sourceTree = "<group>"; };
 		4E98894929AC61160068EF4F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4E98894C29AC61160068EF4F /* DemoSplashViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoSplashViewController.m; sourceTree = "<group>"; };
-		4E98894D29AC61160068EF4F /* DemoInterstitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoInterstitialViewController.h; sourceTree = "<group>"; };
-		4E98894E29AC61160068EF4F /* DemoFullScreenVideoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoFullScreenVideoController.h; sourceTree = "<group>"; };
-		4E98894F29AC61160068EF4F /* DemoBannerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoBannerViewController.h; sourceTree = "<group>"; };
-		4E98895029AC61160068EF4F /* DemoRewardVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoRewardVideoViewController.m; sourceTree = "<group>"; };
-		4E98895229AC61160068EF4F /* DemoFeedExpressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoFeedExpressViewController.h; sourceTree = "<group>"; };
-		4E98895329AC61160068EF4F /* DemoListFeedExpressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoListFeedExpressViewController.h; sourceTree = "<group>"; };
-		4E98895429AC61160068EF4F /* DemoFeedExpressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoFeedExpressViewController.m; sourceTree = "<group>"; };
-		4E98895529AC61160068EF4F /* DemoListFeedExpressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoListFeedExpressViewController.m; sourceTree = "<group>"; };
-		4E98895629AC61160068EF4F /* DemoFullScreenVideoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoFullScreenVideoController.m; sourceTree = "<group>"; };
-		4E98895729AC61160068EF4F /* DemoInterstitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoInterstitialViewController.m; sourceTree = "<group>"; };
 		4E98895829AC61160068EF4F /* DemoSplashViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoSplashViewController.h; sourceTree = "<group>"; };
-		4E98895929AC61160068EF4F /* DemoRewardVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoRewardVideoViewController.h; sourceTree = "<group>"; };
-		4E98895A29AC61160068EF4F /* DemoBannerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoBannerViewController.m; sourceTree = "<group>"; };
 		4E98898829AC61160068EF4F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4E98898929AC61160068EF4F /* NSTimeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTimeUtils.h; sourceTree = "<group>"; };
 		4E98898A29AC61160068EF4F /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -289,29 +271,9 @@
 			isa = PBXGroup;
 			children = (
 				4E98894C29AC61160068EF4F /* DemoSplashViewController.m */,
-				4E98894D29AC61160068EF4F /* DemoInterstitialViewController.h */,
-				4E98894E29AC61160068EF4F /* DemoFullScreenVideoController.h */,
-				4E98894F29AC61160068EF4F /* DemoBannerViewController.h */,
-				4E98895029AC61160068EF4F /* DemoRewardVideoViewController.m */,
-				4E98895129AC61160068EF4F /* DemoFeedExpress */,
-				4E98895629AC61160068EF4F /* DemoFullScreenVideoController.m */,
-				4E98895729AC61160068EF4F /* DemoInterstitialViewController.m */,
 				4E98895829AC61160068EF4F /* DemoSplashViewController.h */,
-				4E98895929AC61160068EF4F /* DemoRewardVideoViewController.h */,
-				4E98895A29AC61160068EF4F /* DemoBannerViewController.m */,
 			);
 			path = Template;
-			sourceTree = "<group>";
-		};
-		4E98895129AC61160068EF4F /* DemoFeedExpress */ = {
-			isa = PBXGroup;
-			children = (
-				4E98895229AC61160068EF4F /* DemoFeedExpressViewController.h */,
-				4E98895329AC61160068EF4F /* DemoListFeedExpressViewController.h */,
-				4E98895429AC61160068EF4F /* DemoFeedExpressViewController.m */,
-				4E98895529AC61160068EF4F /* DemoListFeedExpressViewController.m */,
-			);
-			path = DemoFeedExpress;
 			sourceTree = "<group>";
 		};
 		6003F581195388D10070C39A = {
@@ -581,24 +543,18 @@
 				4E9889A029AC61160068EF4F /* DemoSplashViewController.m in Sources */,
 				4E9889BB29AC61170068EF4F /* AppDelegate.m in Sources */,
 				4E98899F29AC61160068EF4F /* main.m in Sources */,
-				4E9889A329AC61160068EF4F /* DemoListFeedExpressViewController.m in Sources */,
-				4E9889A529AC61160068EF4F /* DemoInterstitialViewController.m in Sources */,
 				4E98899829AC61160068EF4F /* ExamTableViewCell.m in Sources */,
 				4E98899029AC61160068EF4F /* ViewBuilder.m in Sources */,
-				4E9889A429AC61160068EF4F /* DemoFullScreenVideoController.m in Sources */,
 				4E98899A29AC61160068EF4F /* BaseViewController.m in Sources */,
 				4E98899529AC61160068EF4F /* BYExamCellModel.m in Sources */,
 				4E98899129AC61160068EF4F /* JDStatusBarNotification.m in Sources */,
 				4E9889BC29AC61170068EF4F /* CustomListViewController.m in Sources */,
 				4E98899229AC61160068EF4F /* JDStatusBarView.m in Sources */,
-				4E9889A629AC61160068EF4F /* DemoBannerViewController.m in Sources */,
 				4E98899B29AC61160068EF4F /* ViewController.m in Sources */,
 				4E98899429AC61160068EF4F /* JDStatusBarStyle.m in Sources */,
 				4E98899929AC61160068EF4F /* DemoUtils.m in Sources */,
 				4E98899329AC61160068EF4F /* JDStatusBarLayoutMarginHelper.m in Sources */,
-				4E9889A229AC61160068EF4F /* DemoFeedExpressViewController.m in Sources */,
 				4E98898F29AC61160068EF4F /* NSTimeUtils.m in Sources */,
-				4E9889A129AC61160068EF4F /* DemoRewardVideoViewController.m in Sources */,
 				4E98899629AC61160068EF4F /* CellBuilder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -866,7 +822,7 @@
 					"-weak_framework",
 					"\"WebKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "-com.hikvision.videogo";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hikvision.videogo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
@@ -988,7 +944,7 @@
 					"-weak_framework",
 					"\"WebKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "-com.hikvision.videogo";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hikvision.videogo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
