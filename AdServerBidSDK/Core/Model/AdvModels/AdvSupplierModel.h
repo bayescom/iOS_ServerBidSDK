@@ -92,7 +92,7 @@ NSString * ADVStringFromNAdServerBidSdkSupplierRepoType(AdServerBidSdkSupplierRe
 // CSJ
 @property (nonatomic, copy) NSString *token;
 // KS
-@property (nonatomic, strong) NSDictionary *ksToken;
+@property (nonatomic, copy) NSString *ksToken;
 // 各个渠道token  这个字段只在 MercuryAdapter里有用
 @property (nonatomic, strong) NSMutableArray *sdkBiddingInfo;
 

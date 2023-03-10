@@ -96,9 +96,7 @@
     model.posId = _supplier.sdk_adspot_id;
 
     NSString *token = [KSAdSDKManager getBidRequestToken:model];
-    /// 此处之所以转成dictionary 是因为 raddus 出解析参数时出错
-    NSDictionary *ksToken = [NSString dictionaryWithJsonString:token];
-    _supplier.ksToken = ksToken;
+    _supplier.ksToken = token;
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoBiddingToken supplier:_supplier error:nil];
 
 }
@@ -221,9 +219,8 @@
 }
 /**
  * splash ad clicked
- * @param inMiniWindow whether click in mini window
  */
-- (void)ksad_splashAd:(KSSplashAdView *)splashAdView didClick:(BOOL)inMiniWindow {
+- (void)ksad_splashAdDidClick:(KSSplashAdView *)splashAdView {
     [self.adspot reportWithType:AdServerBidSdkSupplierRepoClicked supplier:_supplier error:nil];
     if ([self.delegate respondsToSelector:@selector(adServerBidClicked)]) {
         [self.delegate adServerBidClicked];
@@ -251,7 +248,6 @@
  * @param showDuration  splash show duration (no subsequent callbacks, remove & release KSSplashAdView here)
  */
 - (void)ksad_splashAd:(KSSplashAdView *)splashAdView didSkip:(NSTimeInterval)showDuration {
-//    NSLog(@"----%@", NSStringFromSelector(_cmd));
     if ([self.delegate respondsToSelector:@selector(adServerBidSplashOnAdSkipClicked)]) {
         [self.delegate adServerBidSplashOnAdSkipClicked];
     }
